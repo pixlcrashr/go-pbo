@@ -12,6 +12,7 @@ import (
 	"unsafe"
 )
 
+//A simple ArmA 3 header entry
 type HeaderEntry struct {
 	FileName                                                   string
 	PackingMethod, OriginalSize, Reserved, TimeStamp, DataSize uint32
