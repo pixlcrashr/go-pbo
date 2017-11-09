@@ -2,6 +2,7 @@ package pbo
 
 import (
 	"bytes"
+	"crypto/sha1"
 	"encoding/binary"
 	"io"
 	"io/ioutil"
@@ -180,6 +181,11 @@ func (pbo *PBO) Generate() error {
 		}
 	}
 
+	checksum := pbo.GetChecksum()
+
+	pbo.Buffer.WriteByte(byte('\x00'))
+	pbo.Buffer.Write(checksum)
+
 	return nil
 }
 
@@ -191,6 +197,14 @@ func (pbo *PBO) Save() error {
 //SaveTo saves the buffer PBO.Buffer to a given location to
 func (pbo *PBO) SaveTo(to string) error {
 	return ioutil.WriteFile(to, pbo.Buffer.Bytes(), 0644)
+}
+
+//GetChecksum returns a SHA1 checksum for validation purposes
+//Although, the checksum is needed at the end of each .pbo-file if you want to sign it
+func (pbo *PBO) GetChecksum() []byte {
+	hash := sha1.New()
+	hash.Write(pbo.Buffer.Bytes())
+	return hash.Sum(nil)
 }
 
 //GetFiles gets every file in a .pbo-file directory

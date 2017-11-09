@@ -91,3 +91,7 @@ func TestGetFiles(t *testing.T) {
 		t.Fatal("there have to be more than 0 files")
 	}
 }
+
+func TestPBOGetChecksum(t *testing.T) {
+
+}
