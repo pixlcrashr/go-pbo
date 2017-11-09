@@ -12,16 +12,18 @@ import (
 	"unsafe"
 )
 
-//A simple ArmA 3 header entry
+//HeaderEntry is a simple ArmA 3 header entry
 type HeaderEntry struct {
 	FileName                                                   string
 	PackingMethod, OriginalSize, Reserved, TimeStamp, DataSize uint32
 }
 
+//ProductEntry is an entry for custom information purpose
 type ProductEntry struct {
 	EntryName, ProductName, ProductVersion string
 }
 
+//PBO is a callable struct for creating a .pbo-file easily
 type PBO struct {
 	Buffer   *bytes.Buffer
 	From, To string
@@ -30,30 +32,41 @@ type PBO struct {
 	Version  string
 }
 
+//WriteProduct writes an header of struct ProductEntry into the buffer PBO.Buffer
 func (pbo *PBO) WriteProduct(product ProductEntry) error {
 	tmpV := make([]byte, len(product.EntryName))
 	copy(tmpV[:], product.EntryName)
-	err := binary.Write(pbo.Buffer, binary.BigEndian, tmpV)
 
-	if err != nil {
+	if err := binary.Write(pbo.Buffer, binary.BigEndian, tmpV); err != nil {
+		return err
+	}
+
+	if err := pbo.Buffer.WriteByte('\x00'); err != nil {
 		return err
 	}
 
 	tmpV = make([]byte, len(product.ProductName))
 	copy(tmpV[:], product.ProductName)
-	err = binary.Write(pbo.Buffer, binary.BigEndian, tmpV)
 
-	if err != nil {
+	if err := binary.Write(pbo.Buffer, binary.BigEndian, tmpV); err != nil {
+		return err
+	}
+
+	if err := pbo.Buffer.WriteByte('\x00'); err != nil {
 		return err
 	}
 
 	tmpV = make([]byte, len(product.ProductVersion))
 	copy(tmpV[:], product.ProductVersion)
-	err = binary.Write(pbo.Buffer, binary.BigEndian, tmpV)
+	if err := binary.Write(pbo.Buffer, binary.BigEndian, tmpV); err != nil {
+		return err
+	}
 
+	err := pbo.Buffer.WriteByte('\x00')
 	return err
 }
 
+//WriteHeader writes a normal file header to the buffer PBO.Buffer
 func (pbo *PBO) WriteHeader(header HeaderEntry) error {
 	tmpV := make([]byte, len(header.FileName))
 	copy(tmpV[:], header.FileName)
@@ -93,6 +106,7 @@ func (pbo *PBO) WriteHeader(header HeaderEntry) error {
 	return err
 }
 
+//Generate generates the buffer which can be saved with PBO.Save() or PBO.SaveTo()
 func (pbo *PBO) Generate() error {
 	pbo.Buffer.Reset()
 	pbo.WriteHeader(HeaderEntry{
@@ -169,14 +183,17 @@ func (pbo *PBO) Generate() error {
 	return nil
 }
 
+//Save saves the buffer PBO.Buffer to a predefined location PBO.To
 func (pbo *PBO) Save() error {
 	return ioutil.WriteFile(pbo.To, pbo.Buffer.Bytes(), 0644)
 }
 
+//SaveTo saves the buffer PBO.Buffer to a given location to
 func (pbo *PBO) SaveTo(to string) error {
 	return ioutil.WriteFile(to, pbo.Buffer.Bytes(), 0644)
 }
 
+//GetFiles gets every file in a .pbo-file directory
 func (pbo *PBO) GetFiles() []string {
 	var files []string
 	filepath.Walk(
@@ -193,6 +210,7 @@ func (pbo *PBO) GetFiles() []string {
 	return files
 }
 
+//New returns a pointer to an PBO object
 func New() *PBO {
 	return &PBO{
 		Buffer: &bytes.Buffer{},
