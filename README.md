@@ -1,5 +1,7 @@
 
 # go-pbo
+[![Go Report Card](https://goreportcard.com/badge/github.com/TheMysteriousVincent/go-pbo)](https://goreportcard.com/report/github.com/TheMysteriousVincent/go-pbo)
+
 *An easy-to-use package for building ArmA 3 .pbo-files in Go.*
 
 ## How to use
