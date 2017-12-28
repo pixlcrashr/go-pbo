@@ -154,6 +154,10 @@ func (pbo *PBO) Generate() error {
 
 		rP, err := filepath.Rel(pbo.From, f)
 
+		if err != nil {
+			return err
+		}
+
 		pbo.WriteHeader(HeaderEntry{
 			FileName:      rP,
 			PackingMethod: 0x0,
