@@ -1,5 +1,6 @@
 
 # go-pbo
+[![GitHub license](https://img.shields.io/github/license/TheMysteriousVincent/go-pbo.svg)](https://github.com/TheMysteriousVincent/go-pbo/blob/master/LICENSE.md)
 [![Go Report Card](https://goreportcard.com/badge/github.com/TheMysteriousVincent/go-pbo)](https://goreportcard.com/report/github.com/TheMysteriousVincent/go-pbo)
 [![GoDoc](https://godoc.org/github.com/TheMysteriousVincent/go-pbo?status.svg)](https://godoc.org/github.com/TheMysteriousVincent/go-pbo)
 
